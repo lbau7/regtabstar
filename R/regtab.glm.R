@@ -3,6 +3,8 @@
 #' regtab method for models of class \code{glm}.
 #'
 #' @param mod A model of class \code{glm}.
+#' @template format
+#' @template style_options
 #' @template or
 #' @template logor
 #' @template ci_or
@@ -31,7 +33,8 @@
 #'   family = binomial
 #'   )
 #' regtab(iris.glm)
-texmod.glm <- function(mod, or = TRUE, logor = FALSE, ci = TRUE, ci_level = 0.95,
+regtab.glm <- function(mod, format = "latex", style_options = list(),
+                       or = TRUE, logor = FALSE, ci = TRUE, ci_level = 0.95,
                        se_logor = FALSE, vcov = NULL, teststatistic = FALSE,
                        pval = TRUE, intercept = FALSE, caption = NULL,
                        n_caption = TRUE, rowlabs = NULL, addref = TRUE,
