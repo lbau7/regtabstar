@@ -16,7 +16,7 @@ To install the package write:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("lbau7/textools")
+devtools::install_github("lbau7/regtabstar")
 ```
 
 ## Usage
