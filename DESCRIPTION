@@ -1,0 +1,15 @@
+Package: regtabstar
+Title: Create nice looking REGression TABles for STAtistical Reports
+Version: 0.1.0
+Authors@R: 
+    person("Lukas", "Baumann", , "baumann@imbi.uni-heideberg.de", role = c("aut", "cre"))
+Description: retabstar creates nice looking regression tables to be used in
+  statistical reports in PDF, HTML or Word format with kableExtra::kbl
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.1
+Imports: 
+    kableExtra
+Suggests: 
+    lmtest
