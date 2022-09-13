@@ -1,0 +1,34 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. -->
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/lbau7/regtabstar/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/lbau7/regtabstar/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+# regtabstar
+
+`regtabstar` creates nice looking regression tables for statistical reports written in LaTeX, HTML or Word.
+
+## Installation
+
+To install the package write:
+
+```{r, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("lbau7/textools")
+```
+  
+## Usage
+
+The main function of `regtabstar` is `regtab()` which creates tables for the regression output of various models.
+
+```{r}
+library(regtabstar)
+
+iris.lm <- lm(Sepal.Length ~ Sepal.Width + Petal.Width + Species, data = iris)
+regtab(iris.lm, format = "pipe")
+```
+
