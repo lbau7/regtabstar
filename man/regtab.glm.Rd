@@ -6,6 +6,8 @@
 \usage{
 \method{regtab}{glm}(
   mod,
+  format = "latex",
+  style_options = list(),
   or = TRUE,
   logor = FALSE,
   ci = TRUE,
@@ -26,6 +28,14 @@
 \arguments{
 \item{mod}{A model of class \code{glm}.}
 
+\item{format}{Type of output corresponding to the \code{format} argument
+in \code{kbl::kableExtra}. For LaTeX output use \code{"latex"},
+for HTML output use \code{"html"} and for Word output use
+\code{"pipe"} or \code{"simple"}.}
+
+\item{style_options}{A list of further options for modyfing the output,
+corresponding to the arguments of \code{kableExtra::kable_styling}.}
+
 \item{or}{Whether the odds ratios should be displayed.}
 
 \item{logor}{Whether the log odds ratios should be displayed.}
@@ -36,7 +46,7 @@ displayed.}
 \item{ci_level}{Level for the confidence intervals.}
 
 \item{se_logor}{Whether the standard errors of the log odds ratios
-should be displayed if \code{results = "summary"}.}
+should be displayed.}
 
 \item{vcov}{If \code{NULL} then the covariance matrix computed
 from \code{lm} will be used. Alternatively, one of the covariance matrix

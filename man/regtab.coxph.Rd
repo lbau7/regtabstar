@@ -6,6 +6,8 @@
 \usage{
 \method{regtab}{coxph}(
   mod,
+  format = "latex",
+  style_options = list(),
   hr = TRUE,
   loghr = FALSE,
   ci = TRUE,
@@ -24,11 +26,18 @@
 \arguments{
 \item{mod}{A model of class \code{coxph}.}
 
+\item{format}{Type of output corresponding to the \code{format} argument
+in \code{kbl::kableExtra}. For LaTeX output use \code{"latex"},
+for HTML output use \code{"html"} and for Word output use
+\code{"pipe"} or \code{"simple"}.}
+
+\item{style_options}{A list of further options for modyfing the output,
+corresponding to the arguments of \code{kableExtra::kable_styling}.}
+
 \item{hr}{Whether the hazard ratios should be displayed if
 \code{results = "summary"}.}
 
-\item{loghr}{Whether the log hazard ratios should be displayed if
-\code{results = "summary"}.}
+\item{loghr}{Whether the log hazard ratios should be displayed.}
 
 \item{ci}{Whether confidence intervals for the hazard ratios should be
 displayed if \code{results = "summary"}.}
