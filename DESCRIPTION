@@ -13,3 +13,5 @@ Imports:
     kableExtra
 Suggests: 
     lmtest
+URL: https://github.com/lbau7/regtabstar
+BugReports: https://github.com/lbau7/regtabstar/issues
