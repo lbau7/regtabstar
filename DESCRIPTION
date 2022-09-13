@@ -12,6 +12,8 @@ RoxygenNote: 7.2.1
 Imports: 
     kableExtra
 Suggests: 
+    lme4,
+    lmerTest,
     lmtest,
     MASS,
     nlme,
