@@ -13,6 +13,8 @@ Imports:
     kableExtra
 Suggests: 
     lmtest,
+    MASS,
+    nlme,
     survival
 URL: https://github.com/lbau7/regtabstar
 BugReports: https://github.com/lbau7/regtabstar/issues
