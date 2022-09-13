@@ -59,7 +59,7 @@ functions from the the \code{sandwich} package can be passed.}
 \item{intercept}{Whether a row for the intercept should be
 displayed.}
 
-\item{caption}{Caption is used for the table. If \code{caption = NULL}
+\item{caption}{Caption that is used for the table. If \code{caption = NULL}
 then the caption is ”Logistic Regression”.}
 
 \item{n_caption}{Wheter the sample size that was used to compute the model
