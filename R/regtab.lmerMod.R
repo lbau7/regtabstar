@@ -42,7 +42,7 @@ regtab.lmerMod <- function(mod, format = "latex", style_options = list(),
   } else {
     coefsm <- stats::coef(summary(mod))
     colnames(coefsm) <- c("Estimate", "Std.Error", "t-Value")
-    inc.col <- which(c(estimate, se, teststatistic) != 0)
+    inc.col <- c(1, which(c(se, teststatistic) != 0) + 1)
     coefsm <- coefsm[, inc.col, drop = FALSE]
   }
 

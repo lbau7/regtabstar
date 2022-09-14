@@ -1,3 +1,2 @@
-#' @param title Title that is used as the caption of the LaTeX table.
-#'   If \code{title = NULL} then the caption is
-#'   "Logistic Mixed Model Regression".
+#' @param caption Title that is used for the table. If \code{caption = NULL}
+#'   then the caption is "Logistic Mixed Model Regression".

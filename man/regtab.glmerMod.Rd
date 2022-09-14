@@ -6,6 +6,8 @@
 \usage{
 \method{regtab}{glmerMod}(
   mod,
+  format = "latex",
+  style_options = list(),
   or = TRUE,
   logor = FALSE,
   ci = TRUE,
@@ -24,6 +26,14 @@
 }
 \arguments{
 \item{mod}{A model of class \code{glmerMod}.}
+
+\item{format}{Type of output corresponding to the \code{format} argument
+in \code{kbl::kableExtra}. For LaTeX output use \code{"latex"},
+for HTML output use \code{"html"} and for Word output use
+\code{"pipe"} or \code{"simple"}.}
+
+\item{style_options}{A list of further options for modyfing the output,
+corresponding to the arguments of \code{kableExtra::kable_styling}.}
 
 \item{or}{Whether the odds ratios should be displayed.}
 
@@ -44,6 +54,9 @@ should be displayed.}
 \item{intercept}{Whether a row for the intercept should be
 displayed.}
 
+\item{caption}{Title that is used for the table. If \code{caption = NULL}
+then the caption is "Logistic Mixed Model Regression".}
+
 \item{n_caption}{Wheter the sample size that was used to compute the model
 should be added to the caption of the table.}
 
@@ -57,10 +70,6 @@ variables should be displayed.}
 \item{digits}{Number of digits that are displayed in the tables.}
 
 \item{...}{Further optional arguments.}
-
-\item{title}{Title that is used as the caption of the LaTeX table.
-If \code{title = NULL} then the caption is
-"Logistic Mixed Model Regression".}
 }
 \value{
 \code{regtab} uses \code{kableExtra::kbl} to return a table.
