@@ -1,4 +1,4 @@
-#' Regression tables for tables for lmerMod models
+#' Regression tables for lmerMod models
 #'
 #' regtab method for models of class \code{lmerMod}.
 #'
@@ -19,7 +19,7 @@
 #' @template digits
 #' @template dotdotdot
 #'
-#' @return \code{texph} uses \code{stargazer} to return LaTeX code for a table.
+#' @return \code{regtab} uses \code{kableExtra::kbl} to return a table.
 #' @details If \code{pval = TRUE} then the package lmerTest is called.
 #' @export
 #'
