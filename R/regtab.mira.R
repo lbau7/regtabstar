@@ -28,6 +28,8 @@
 #' @export
 #'
 #' @examples
+#' library(mice)
+#' # Example taken from the MICE documentation
 #' imp <- mice(nhanes2, m = 2, print = FALSE, seed = 14221)
 #' fit2 <- with(imp, glm(hyp ~ age + chl, family = binomial))
 #' regtab(fit2)
