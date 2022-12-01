@@ -54,7 +54,7 @@ should be displayed if \code{results = "summary"}.}
 \item{caption}{Caption that is used for the table. If \code{title = NULL}
 then the caption is ”Cox Regression”.}
 
-\item{n_caption}{Wheter the sample size that was used to compute the model
+\item{n_caption}{Whether the sample size that was used to compute the model
 should be added to the caption of the table.}
 
 \item{rowlabs}{A vector for the names of the rows in table.

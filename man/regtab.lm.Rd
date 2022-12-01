@@ -55,7 +55,7 @@ displayed.}
 \item{caption}{Caption is used for the table. If \code{caption = NULL}
 then the caption is ”Linear Regression”.}
 
-\item{n_caption}{Wheter the sample size that was used to compute the model
+\item{n_caption}{Whether the sample size that was used to compute the model
 should be added to the caption of the table.}
 
 \item{rowlabs}{A vector for the names of the rows in table.

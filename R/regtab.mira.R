@@ -2,7 +2,7 @@
 #'
 #' regtab method for a matrix of models of class \code{mira}.
 #'
-#' @param mod A matrix of models of class \code{mira}.
+#' @param mod A matrix of models of class \code{mira}, usually generate by \code{mice::with.mids}.
 #' @template format
 #' @template style_options
 #' @template or
@@ -15,7 +15,8 @@
 #' @template pval
 #' @template intercept
 #' @template caption_glm
-#' @template n_caption
+#' @param n_caption Whether the sample size and the number of imputed data sets that were
+#'  used to compute the model should be added to the caption of the table.
 #' @template rowlabs
 #' @template addref
 #' @template digits
@@ -23,40 +24,47 @@
 #'
 #' @return \code{regtab} uses \code{kableExtra::kbl} to return a table.
 #' @details Models of class \code{mira} are currently only supported for
-#'   logistic regression model.
+#'   logistic regression models fit with \code{glm}.
 #' @export
 #'
 #' @examples
 #' imp <- mice(nhanes2, m = 2, print = FALSE, seed = 14221)
-#' fit1 <- with(imp, lm(bmi ~ age + hyp + chl))
-#' regtab(fit1)
+#' fit2 <- with(imp, glm(hyp ~ age + chl, family = binomial))
+#' regtab(fit2)
 regtab.mira <- function(mod, format = "latex", style_options = list(),
                        or = TRUE, logor = FALSE, ci = TRUE, ci_level = 0.95,
                        se_logor = FALSE, vcov = NULL, teststatistic = FALSE,
                        pval = TRUE, intercept = FALSE, caption = NULL,
                        n_caption = TRUE, rowlabs = NULL, addref = TRUE,
                       digits = 3, ...) {
-  if (mod$analyses[[1]]$family$family != "binomial") {
+  mod1 <- mod$analyses[[1]]
+
+  if (!("glm" %in% class(mod1))){
+    stop("Only GLMs are currently supported")
+  }
+
+  if (mod1$family$family != "binomial") {
     stop("Only GLMs of family binomial are currently supported")
   }
 
-  if (mod$analyses[[1]]$family$link != "logit") {
+  if (mod1$family$link != "logit") {
     stop("Only binomial regressions with logit-link are currently supported")
   }
 
-  mod1 <- mod$analyses[[1]]
+
 
   if (is.null(vcov)) {
-    pooled <- mice::pool(fit)
+    pooled <- mice::pool(mod)
     coefsm <- summary(pooled)[, c("estimate", "std.error", "statistic", "p.value")]
     coefsm <- cbind(exp(coefsm[, 1]), coefsm)
     colnames(coefsm) <- c("Odds Ratio", "log OR", "SE (log OR)", "statistic",
       "p-Value")
+    rownames(coefsm) <- summary(pooled)[, "term"]
     inc_col <- which(c(or, logor, se_logor, teststatistic, pval) != 0)
     coefsm <- coefsm[, inc_col, drop = FALSE]
 
     if (ci & or) {
-      estci <- exp(summary(pooled, conf.int = TRUE, conf.level = ci_level)[7, 8])
+      estci <- exp(summary(pooled, conf.int = TRUE, conf.level = ci_level)[, c(7, 8)])
       coefsm <- cbind(coefsm[, 1, drop = FALSE], "Lower CL" = estci[, 1],
         "Upper CL" = estci[,2 ], coefsm[, -1, drop = FALSE])
     }
@@ -113,7 +121,8 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
 
   if (!is.null(rowlabs)) rownames(coefsm) <- rowlabs
   if (n_caption) {
-    caption <- paste0(caption, " (n = ", nrow(stats::model.frame(mod1)), ")")
+    caption <- paste0(caption, " (n subjects = ", nrow(stats::model.frame(mod1)),
+                      ", n imputations = ", pooled$m,")")
   }
 
   out <- kableExtra::kbl(coefsm, format = format, booktabs = TRUE,
