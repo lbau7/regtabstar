@@ -134,7 +134,8 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
   if (!is.null(rowlabs_auto) & is.null(rowlabs)) {
     # By default, rowlabs as usual
     rowlabs <- rownames(coefsm)
-    # Search for rowlabs with label in the data set rowlabs_auto
+    print(rowlabs)
+    # Search for covariates with label in the data set rowlabs_auto
     # and replace the variable name in the respective rows
     covar_names <- names(stats::model.frame(mod1))[-1]
     covar_classes <- sapply(stats::model.frame(mod1), class)
@@ -147,10 +148,10 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
         if(covar_classes[name] %in% c("factor", "ordered")){
           j <- length(levels(stats::model.frame(mod1)[,name]))
         }
-        rowlabs[(i:i+j)] <-
-          paste0(sub(pattern = name,
+        rowlabs[(i:(i+j-1))] <-
+          paste0(gsub(pattern = paste0("^", name),
                replacement = paste(label,"("),
-               x = rowlabs[(i:i+j)]), ")")
+               x = rowlabs[(i:(i+j-1))]), ")")
       }
       i <- i + j + 1
     }
