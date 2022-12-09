@@ -37,8 +37,10 @@
 #' regtab(mod)
 #' # Example for the use of labels
 #' data <- nhanes2
-#' attr(data$hyp, "label") <- "hypertension"
-#' attr(data$chl, "label") <- "total serum cholesterol"
+#' attr(data$age, "label") <- "Age [years]"
+#' attr(data$age, "label") <- "BMI [kg/m^2]"
+#' attr(data$hyp, "label") <- "Hypertension"
+#' attr(data$chl, "label") <- "Total serum cholesterol [mg/dl]"
 #' imp2 <- mice(data, m = 2, print = FALSE, seed = 14221)
 #' mod2 <- with(imp2, glm(hyp ~ age + chl, family = binomial))
 #' regtab(mod2, rowlabs_auto = data)
@@ -134,7 +136,6 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
   if (!is.null(rowlabs_auto) & is.null(rowlabs)) {
     # By default, rowlabs as usual
     rowlabs <- rownames(coefsm)
-    print(rowlabs)
     # Search for covariates with label in the data set rowlabs_auto
     # and replace the variable name in the respective rows
     covar_names <- names(stats::model.frame(mod1))[-1]
@@ -143,17 +144,21 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
     if(intercept) i <- 2
     for(name in covar_names){
       label <- attr(rowlabs_auto[, name], "label")
-      if(!is.null(label)) {
-        j <- 1
-        if(covar_classes[name] %in% c("factor", "ordered")){
-          j <- length(levels(stats::model.frame(mod1)[,name]))
+      j <- 1
+      if(covar_classes[name] %in% c("factor", "ordered")){
+        j <- length(levels(stats::model.frame(mod1)[,name]))
+        if(!addref){
+          j <- j - 1
         }
+      }
+      if(!is.null(label)) {
         rowlabs[(i:(i+j-1))] <-
           paste0(gsub(pattern = paste0("^", name),
                replacement = paste(label,"("),
                x = rowlabs[(i:(i+j-1))]), ")")
+
       }
-      i <- i + j + 1
+      i <- i + j
     }
     # Remove empty brackets
     rowlabs <- gsub(pattern = " \\(\\)$", replacement = "", rowlabs)

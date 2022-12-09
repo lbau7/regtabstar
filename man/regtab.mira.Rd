@@ -98,8 +98,10 @@ mod <- with(imp, glm(hyp ~ age + chl, family = binomial))
 regtab(mod)
 # Example for the use of labels
 data <- nhanes2
-attr(data$hyp, "label") <- "hypertension"
-attr(data$chl, "label") <- "total serum cholesterol"
+attr(data$age, "label") <- "Age [years]"
+attr(data$age, "label") <- "BMI [kg/m^2]"
+attr(data$hyp, "label") <- "Hypertension"
+attr(data$chl, "label") <- "Total serum cholesterol [mg/dl]"
 imp2 <- mice(data, m = 2, print = FALSE, seed = 14221)
 mod2 <- with(imp2, glm(hyp ~ age + chl, family = binomial))
 regtab(mod2, rowlabs_auto = data)
