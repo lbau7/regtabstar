@@ -143,7 +143,7 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
     i <- 1
     if(intercept) i <- 2
     for(name in covar_names){
-      label <- attr(rowlabs_auto[, name], "label")
+      label <- attr(rowlabs_auto[[name]], "label")
       j <- 1
       if(covar_classes[name] %in% c("factor", "ordered")){
         j <- length(levels(stats::model.frame(mod1)[,name]))
