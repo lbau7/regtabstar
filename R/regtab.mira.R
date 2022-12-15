@@ -18,6 +18,8 @@
 #' @param n_caption Whether the sample size and the number of imputed data sets that were
 #'  used to compute the model should be added to the caption of the table.
 #' @template rowlabs
+#' @param rowlabs_auto data frame used for automatically labeling rows using the
+#' \code{"label"}-attributes of the columns
 #' @template addref
 #' @template digits
 #' @template dotdotdot
@@ -29,16 +31,28 @@
 #'
 #' @examples
 #' library(mice)
-#' # Example taken from the MICE documentation
+#' # Basic example taken from the MICE documentation
 #' imp <- mice(nhanes2, m = 2, print = FALSE, seed = 14221)
-#' fit2 <- with(imp, glm(hyp ~ age + chl, family = binomial))
-#' regtab(fit2)
+#' mod <- with(imp, glm(hyp ~ age + chl, family = binomial))
+#' regtab(mod)
+#' # Example for the use of labels
+#' data <- nhanes2
+#' attr(data$age, "label") <- "Age [years]"
+#' attr(data$age, "label") <- "BMI [kg/m^2]"
+#' attr(data$hyp, "label") <- "Hypertension"
+#' attr(data$chl, "label") <- "Total serum cholesterol [mg/dl]"
+#' imp2 <- mice(data, m = 2, print = FALSE, seed = 14221)
+#' mod2 <- with(imp2, glm(hyp ~ age + chl, family = binomial))
+#' regtab(mod2, rowlabs_auto = data)
+#'
+
 regtab.mira <- function(mod, format = "latex", style_options = list(),
-                       or = TRUE, logor = FALSE, ci = TRUE, ci_level = 0.95,
-                       se_logor = FALSE, vcov = NULL, teststatistic = FALSE,
-                       pval = TRUE, intercept = FALSE, caption = NULL,
-                       n_caption = TRUE, rowlabs = NULL, addref = TRUE,
-                      digits = 3, ...) {
+                        or = TRUE, logor = FALSE, ci = TRUE, ci_level = 0.95,
+                        se_logor = FALSE, vcov = NULL, teststatistic = FALSE,
+                        pval = TRUE, intercept = FALSE, caption = NULL,
+                        n_caption = TRUE, rowlabs = NULL, addref = TRUE,
+                        digits = 3, rowlabs_auto = NULL,
+                        ...) {
   mod1 <- mod$analyses[[1]]
 
   if (!("glm" %in% class(mod1))){
@@ -52,8 +66,6 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
   if (mod1$family$link != "logit") {
     stop("Only binomial regressions with logit-link are currently supported")
   }
-
-
 
   if (is.null(vcov)) {
     pooled <- mice::pool(mod)
@@ -81,15 +93,15 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
   coefsm <- round(coefsm, digits = digits)
   if (pval) coefsm[highsig, ncol(coefsm)] <- "<0.001"
 
+
   if (addref) {
     facrows <- sapply(stats::model.frame(mod1), class)
     facrows <- sapply(facrows, function(x) x[[1]])
     facrows <- facrows %in% c("factor", "ordered")
     facrows[1] <- FALSE
     if (sum(facrows) > 0) {
-      faclevs <- sapply(stats::model.frame(mod1)[, facrows],
-        function(x) levels(x)[1])
-      facrlabs <- paste0(names(faclevs), faclevs)
+      faclevs <- sapply(stats::model.frame(mod1),
+                        function(x) levels(x)[1])[facrows]
 
       facvec <- numeric()
       for(i in 1:length(facrows)) {
@@ -97,11 +109,12 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
           facvec <- c(facvec, FALSE)
         } else {
           facvec <- c(facvec, TRUE, rep(FALSE,
-            length(levels(stats::model.frame(mod1)[, i])) - 2))
+                                        length(levels(stats::model.frame(mod1)[, i])) - 2))
         }
       }
 
       if (intercept == FALSE) facvec <- facvec[-1]
+      facrlabs <- paste0(names(faclevs), faclevs)
 
       emptyrow <- c(0, rep(".", (ncol(coefsm) - 1)))
       newrowpos <- grep(1, facvec)
@@ -119,6 +132,36 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
         j <- j + 1
       }
     }
+  }
+  if (!is.null(rowlabs_auto) & is.null(rowlabs)) {
+    # By default, rowlabs as usual
+    rowlabs <- rownames(coefsm)
+    # Search for covariates with label in the data set rowlabs_auto
+    # and replace the variable name in the respective rows
+    covar_names <- names(stats::model.frame(mod1))[-1]
+    covar_classes <- sapply(stats::model.frame(mod1), class)
+    i <- 1
+    if(intercept) i <- 2
+    for(name in covar_names){
+      label <- attr(rowlabs_auto[, name], "label")
+      j <- 1
+      if(covar_classes[name] %in% c("factor", "ordered")){
+        j <- length(levels(stats::model.frame(mod1)[,name]))
+        if(!addref){
+          j <- j - 1
+        }
+      }
+      if(!is.null(label)) {
+        rowlabs[(i:(i+j-1))] <-
+          paste0(gsub(pattern = paste0("^", name),
+               replacement = paste(label,"("),
+               x = rowlabs[(i:(i+j-1))]), ")")
+
+      }
+      i <- i + j
+    }
+    # Remove empty brackets
+    rowlabs <- gsub(pattern = " \\(\\)$", replacement = "", rowlabs)
   }
 
   if (!is.null(rowlabs)) rownames(coefsm) <- rowlabs
