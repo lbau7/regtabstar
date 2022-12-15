@@ -117,7 +117,7 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
       facrlabs <- paste0(names(faclevs), faclevs)
 
       emptyrow <- c(0, rep(".", (ncol(coefsm) - 1)))
-      if(or) emptyrow <- c(0, rep(".", (ncol(coefsm) - 1)))
+      if(or) emptyrow <- c(1, rep(".", (ncol(coefsm) - 1)))
       newrowpos <- grep(1, facvec)
       j <- 0
       for(i in 1:sum(facrows)) {
