@@ -29,8 +29,9 @@
 #' @export
 #'
 #' @examples
+#' # Example taken from the MICE documentation
 #' library(mice)
-#' # Basic example taken from the MICE documentation
+#'
 #' imp <- mice::mice(nhanes2, m = 2, print = FALSE, seed = 14221)
 #' mod <- mice:::with.mids(imp, glm(hyp ~ age + chl, family = binomial))
 #' regtab(mod)
@@ -44,6 +45,22 @@
 #' mod2 <- mice:::with.mids(imp2, glm(hyp ~ age + chl, family = binomial))
 #' regtab(mod2, rowlabs_auto = data)
 #'
+#' # Example taken from the MASS documentation
+#' library(MASS)
+#'
+#' data(housing, package="MASS")
+#' attr(housing$Sat, "label") <- "Satisfaction"
+#' attr(housing$Infl, "label") <- "Degree of influence"
+#' attr(housing$Type, "label") <- "Type"
+#' attr(housing$Cont, "label") <- "Contact with other residents"
+#' attr(housing$Freq, "label") <- "Number of residents"
+#' housing_amp <- mice::ampute(housing)$amp
+#' imp3 <- mice::mice(housing_amp, m = 2, print = FALSE, seed = 14221)
+#' mod3 <- mice:::with.mids(imp3,
+#'                          MASS::polr(ordered(Sat) ~ Infl + Type + Cont, weights = Freq,
+#'                          Hess = TRUE))
+#' # regtab(mod3, rowlabs_auto = housing)
+#' # regtab(mod3, addref = FALSE)
 
 regtab.mira <- function(mod, format = "latex", style_options = list(),
                         or = TRUE, logor = FALSE, ci = TRUE, ci_level = 0.95,
@@ -54,17 +71,24 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
                         ...) {
   mod1 <- mod$analyses[[1]]
 
-  if (!("glm" %in% class(mod1))){
-    stop("Only GLMs are currently supported")
+  if (("glm" %in% class(mod1))){
+    if (mod1$family$family != "binomial") {
+      stop("Only GLMs of family binomial are currently supported")
+    }
+
+    if (mod1$family$link != "logit") {
+      stop("Only binomial regressions with logit-link are currently supported")
+    }
+    if (is.null(caption)) caption <- "Pooled estimates of logistic regression estimates on multiply imputed data sets"
+  } else if (("polr" %in% class(mod1))) {
+    if (mod1$method != "logistic") {
+      stop("Only logistic proportional odds models are currently supported")
+    }
+  } else {
+    stop("Only mira object for GLMs or for POLRs are currently supported")
+    if (is.null(caption)) caption <- "Pooled estimates of ordinal logistic regression estimates on multiply imputed data sets"
   }
 
-  if (mod1$family$family != "binomial") {
-    stop("Only GLMs of family binomial are currently supported")
-  }
-
-  if (mod1$family$link != "logit") {
-    stop("Only binomial regressions with logit-link are currently supported")
-  }
 
   if (is.null(vcov)) {
     pooled <- mice::pool(mod)
@@ -86,7 +110,6 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
   }
 
   if (!intercept) coefsm <- coefsm[-1, , drop = FALSE]
-  if (is.null(caption)) caption <- "Pooled estimates of logistic regression estimates on multiply imputed data sets"
 
   if (pval) highsig <- which(coefsm[, ncol(coefsm)] < 0.001)
   coefsm <- round(coefsm, digits = digits)
