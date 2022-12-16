@@ -18,8 +18,7 @@
 #' @param n_caption Whether the sample size and the number of imputed data sets that were
 #'  used to compute the model should be added to the caption of the table.
 #' @template rowlabs
-#' @param rowlabs_auto data frame used for automatically labeling rows using the
-#' \code{"label"}-attributes of the columns
+#' @template rowlabs_auto
 #' @template addref
 #' @template digits
 #' @template dotdotdot
@@ -32,8 +31,8 @@
 #' @examples
 #' library(mice)
 #' # Basic example taken from the MICE documentation
-#' imp <- mice(nhanes2, m = 2, print = FALSE, seed = 14221)
-#' mod <- with(imp, glm(hyp ~ age + chl, family = binomial))
+#' imp <- mice::mice(nhanes2, m = 2, print = FALSE, seed = 14221)
+#' mod <- mice:::with.mids(imp, glm(hyp ~ age + chl, family = binomial))
 #' regtab(mod)
 #' # Example for the use of labels
 #' data <- nhanes2
@@ -41,8 +40,8 @@
 #' attr(data$age, "label") <- "BMI [kg/m^2]"
 #' attr(data$hyp, "label") <- "Hypertension"
 #' attr(data$chl, "label") <- "Total serum cholesterol [mg/dl]"
-#' imp2 <- mice(data, m = 2, print = FALSE, seed = 14221)
-#' mod2 <- with(imp2, glm(hyp ~ age + chl, family = binomial))
+#' imp2 <- mice::mice(data, m = 2, print = FALSE, seed = 14221)
+#' mod2 <- mice:::with.mids(imp2, glm(hyp ~ age + chl, family = binomial))
 #' regtab(mod2, rowlabs_auto = data)
 #'
 
@@ -69,16 +68,16 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
 
   if (is.null(vcov)) {
     pooled <- mice::pool(mod)
-    coefsm <- summary(pooled)[, c("estimate", "std.error", "statistic", "p.value")]
+    coefsm <- mice:::summary.mipo(pooled)[, c("estimate", "std.error", "statistic", "p.value")]
     coefsm <- cbind(exp(coefsm[, 1]), coefsm)
     colnames(coefsm) <- c("Odds Ratio", "log OR", "SE (log OR)", "statistic",
       "p-Value")
-    rownames(coefsm) <- summary(pooled)[, "term"]
+    rownames(coefsm) <- mice:::summary.mipo(pooled)[, "term"]
     inc_col <- which(c(or, logor, se_logor, teststatistic, pval) != 0)
     coefsm <- coefsm[, inc_col, drop = FALSE]
 
     if (ci & or) {
-      estci <- exp(summary(pooled, conf.int = TRUE, conf.level = ci_level)[, c(7, 8)])
+      estci <- exp(mice:::summary.mipo(pooled, conf.int = TRUE, conf.level = ci_level)[, c(7, 8)])
       coefsm <- cbind(coefsm[, 1, drop = FALSE], "Lower CL" = estci[, 1],
         "Upper CL" = estci[,2 ], coefsm[, -1, drop = FALSE])
     }
@@ -134,34 +133,16 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
     }
   }
   if (!is.null(rowlabs_auto) & is.null(rowlabs)) {
-    # By default, rowlabs as usual
-    rowlabs <- rownames(coefsm)
-    # Search for covariates with label in the data set rowlabs_auto
-    # and replace the variable name in the respective rows
-    covar_names <- names(stats::model.frame(mod1))[-1]
-    covar_classes <- sapply(stats::model.frame(mod1), class)
-    i <- 1
-    if(intercept) i <- 2
-    for(name in covar_names){
-      label <- attr(rowlabs_auto[, name], "label")
-      j <- 1
-      if(covar_classes[name] %in% c("factor", "ordered")){
-        j <- length(levels(stats::model.frame(mod1)[,name]))
-        if(!addref){
-          j <- j - 1
-        }
-      }
-      if(!is.null(label)) {
-        rowlabs[(i:(i+j-1))] <-
-          paste0(gsub(pattern = paste0("^", name),
-               replacement = paste(label,"("),
-               x = rowlabs[(i:(i+j-1))]), ")")
-
-      }
-      i <- i + j
+    covar_pos = (1:length(coefsm))
+    if(intercept) covar_pos <- covar_pos[-1]
+    covar_names = names(stats::model.frame(mod1))[-1]
+    if(!is.null(mod$model$`(weights)`)){
+      covar_names <- covar_names[-length(covar_names)]
     }
-    # Remove empty brackets
-    rowlabs <- gsub(pattern = " \\(\\)$", replacement = "", rowlabs)
+    rowlabs <- generate_rowlabs(rownames = rownames(coefsm),  mod = mod1,
+                                addref = addref, rowlabs_auto = rowlabs_auto,
+                                covar_names = covar_names,
+                                covar_pos = covar_pos)
   }
 
   if (!is.null(rowlabs)) rownames(coefsm) <- rowlabs

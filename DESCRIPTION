@@ -21,3 +21,15 @@ Suggests:
     mice
 URL: https://github.com/lbau7/regtabstar
 BugReports: https://github.com/lbau7/regtabstar/issues
+Collate: 
+    'regtab.R'
+    'regtab.coxph.R'
+    'regtab.glm.R'
+    'regtab.glmerMod.R'
+    'regtab.lm.R'
+    'regtab.lme.R'
+    'regtab.lmerMod.R'
+    'regtab.lmerModLmerTest.R'
+    'utils.R'
+    'regtab.mira.R'
+    'regtab.polr.R'
