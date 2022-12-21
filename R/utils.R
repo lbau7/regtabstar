@@ -1,7 +1,7 @@
 #' Helper function for updating row names using the labels from a data frame
 #'
 #' @param rownames string vector with names from the object `coefsm`
-#' @param mod A model
+#' @param mod the underlying model
 #' @template addref
 #' @template rowlabs_auto
 #' @param covar_names a string vector containing the names of the covariates
@@ -42,4 +42,56 @@ generate_rowlabs <- function(rownames, mod, addref, rowlabs_auto,
   }
   # Remove empty brackets
   rowlabs <- gsub(pattern = " \\(\\)$", replacement = "", rowlabs)
+}
+#' Helper function for adding reference levels to the regression coefficients
+#' of factors
+#'
+#' @param coefsm a data frame containing the regression coefficients
+#' @param mod the underlying model
+#' @template or
+#'
+#' @return a data frame containing the regression coefficients including their
+#'  reference levels
+#'
+#' @keywords internal
+add_reference_levels <- function(coefsm, mod, or){
+  facrows <- sapply(stats::model.frame(mod), class)
+  facrows <- sapply(facrows, function(x) x[[1]])
+  facrows <- facrows %in% c("factor", "ordered")
+  facrows[1] <- FALSE
+  if (sum(facrows) > 0) {
+    faclevs <- sapply(stats::model.frame(mod)[,facrows],
+                      function(x) levels(x)[1])
+    facrlabs <- paste0(names(faclevs), faclevs)
+
+    facvec <- numeric()
+    for(i in 1:length(facrows)) {
+      if (facrows[i] == FALSE) {
+        facvec <- c(facvec, FALSE)
+      } else {
+        facvec <- c(facvec, TRUE, rep(FALSE,
+                                      length(levels(stats::model.frame(mod)[, i])) - 2))
+      }
+    }
+
+    facvec <- facvec[-1]
+
+    emptyrow <- c(0, rep(".", (ncol(coefsm) - 3)), "coefficient", ".")
+    if(or) emptyrow <- c(1, rep(".", (ncol(coefsm) - 3)), "coefficient", ".")
+    newrowpos <- grep(1, facvec)
+    j <- 0
+    for(i in 1:sum(facrows)) {
+      if (newrowpos[i] == 1) {
+        coefsm <- rbind(emptyrow, coefsm)
+        rownames(coefsm)[1] <- facrlabs[i]
+      } else {
+        coefsm <- rbind(coefsm[1:(newrowpos[i] + j - 1), , drop = FALSE],
+                        emptyrow,
+                        coefsm[(newrowpos[i] + j):nrow(coefsm), , drop = FALSE])
+        rownames(coefsm)[newrowpos[i] + j] <- facrlabs[i]
+      }
+      j <- j + 1
+    }
+  }
+  return(coefsm)
 }

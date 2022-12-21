@@ -91,8 +91,9 @@ Models of class \code{mira} are currently only supported for
 logistic regression models fit with \code{glm}.
 }
 \examples{
+# Example taken from the MICE documentation
 library(mice)
-# Basic example taken from the MICE documentation
+
 imp <- mice::mice(nhanes2, m = 2, print = FALSE, seed = 14221)
 mod <- mice:::with.mids(imp, glm(hyp ~ age + chl, family = binomial))
 regtab(mod)
@@ -105,5 +106,30 @@ attr(data$chl, "label") <- "Total serum cholesterol [mg/dl]"
 imp2 <- mice::mice(data, m = 2, print = FALSE, seed = 14221)
 mod2 <- mice:::with.mids(imp2, glm(hyp ~ age + chl, family = binomial))
 regtab(mod2, rowlabs_auto = data)
+
+# Example for polr
+data(housing, package="MASS")
+housing_amp <- mice::ampute(housing)$amp
+housing_amp$Sat <- ordered(housing_amp$Sat,
+                           levels = (1:3),
+                           labels = levels(housing$Sat))
+housing_amp$Infl <- factor(housing_amp$Infl,
+                           levels = (1:3),
+                           labels = levels(housing$Infl))
+housing_amp$Type <- factor(housing_amp$Type,
+                           levels = (1:4),
+                           labels = levels(housing$Type))
+housing_amp$Cont <- factor(housing_amp$Cont,
+                           levels = (1:2),
+                           labels = levels(housing$Cont))
+attr(housing_amp$Sat, "label") <- "Satisfaction"
+attr(housing_amp$Infl, "label") <- "Degree of influence"
+attr(housing_amp$Type, "label") <- "Type"
+attr(housing_amp$Cont, "label") <- "Contact with other residents"
+imp3 <- mice::mice(housing_amp, m = 2, print = FALSE, seed = 14221)
+mod3 <- mice:::with.mids(imp3,
+                         MASS::polr(Sat ~ Infl + Type + Cont, weights = Freq,
+                                    Hess = TRUE))
+regtab(mod3, rowlabs_auto = housing_amp)
 
 }

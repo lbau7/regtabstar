@@ -16,7 +16,7 @@ generate_rowlabs(
 \arguments{
 \item{rownames}{string vector with names from the object \code{coefsm}}
 
-\item{mod}{A model}
+\item{mod}{the underlying model}
 
 \item{addref}{Whether a row for the reference category of categorial
 variables should be displayed.}
