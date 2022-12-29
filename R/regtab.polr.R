@@ -68,6 +68,9 @@ regtab.polr <- function(mod, format = "latex", style_options = list(),
   if(pval){
     coefsm[["p-value"]] = AER:::coeftest.polr(mod, vcov. = vcov)[,"Pr(>|z|)"]
   }
+  # covar_pos denotes the position of covariates (i.e. rows which are not
+  # intercepts)
+  covar_pos = which(coefsm$coef.type == "coefficient")
   # Round to specified number of digits
   if (pval) highsig <- which(coefsm[, "p-value"] < 0.001)
   coefsm[,-which(names(coefsm) == "coef.type")] <-
@@ -75,11 +78,10 @@ regtab.polr <- function(mod, format = "latex", style_options = list(),
   if (pval) coefsm[highsig, "p-value"] <- "<0.001"
   # Add reference level
   if (addref) {
-    coefsm <- add_reference_levels(coefsm, mod, or)
+    coefsm <- add_reference_levels(coefsm, mod, or, covar_pos)
   }
 
   if (!is.null(rowlabs_auto) & is.null(rowlabs)) {
-    covar_pos = which(coefsm$coef.type == "coefficient")
     covar_names = names(stats::model.frame(mod))[-1]
     if(!is.null(mod$model$`(weights)`)){
       covar_names <- covar_names[-length(covar_names)]

@@ -39,7 +39,7 @@
 #' # Example for the use of labels
 #' data <- nhanes2
 #' attr(data$age, "label") <- "Age [years]"
-#' attr(data$age, "label") <- "BMI [kg/m^2]"
+#' attr(data$bmi, "label") <- "BMI [kg/m^2]"
 #' attr(data$hyp, "label") <- "Hypertension"
 #' attr(data$chl, "label") <- "Total serum cholesterol [mg/dl]"
 #' imp2 <- mice::mice(data, m = 2, print = FALSE, seed = 14221)
@@ -131,6 +131,8 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
                       replacement = "intercept",
                       x = broom::tidy(mod1)$coef.type))
   }
+  # covar_pos is a vector denoting the positions of coefficients
+  covar_pos = which(coefsm$coef.type == "coefficient")
   # Round to specified number of digits
   if (pval) highsig <- which(coefsm[, "p-value"] < 0.001)
   coefsm[,-which(names(coefsm) == "coef.type")] <-
@@ -138,11 +140,10 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
   if (pval) coefsm[highsig, "p-value"] <- "<0.001"
   # Add reference level
   if (addref) {
-    coefsm <- add_reference_levels(coefsm, mod1, or)
+    coefsm <- add_reference_levels(coefsm, mod1, or, covar_pos)
   }
   if (!is.null(rowlabs_auto) & is.null(rowlabs)) {
     # Add labels to names of covariates
-    covar_pos = which(coefsm$coef.type == "coefficient")
     covar_names = names(stats::model.frame(mod1))[-1]
     if(!is.null(mod1$model$`(weights)`)){
       covar_names <- covar_names[-length(covar_names)]
