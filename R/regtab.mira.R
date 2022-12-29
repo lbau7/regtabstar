@@ -170,8 +170,8 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
   if (!intercept) coefsm <- coefsm[coefsm$coef.type != "intercept", , drop = FALSE]
   # Add caption
   if (n_caption) {
-    caption <- paste0(caption, " (n subjects = ", nrow(stats::model.frame(mod1)),
-                      ", n imputations = ", pooled$m,")")
+    caption <- paste0(caption, " (no. of subjects = ", nrow(stats::model.frame(mod1)),
+                      ", no. of imputations = ", pooled$m,")")
   }
   # Remove coef.type column
   coefsm <- coefsm[, which(names(coefsm) != "coef.type"), drop = FALSE]
