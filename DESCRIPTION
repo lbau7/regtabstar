@@ -1,6 +1,6 @@
 Package: regtabstar
 Title: Create nice looking REGression TABles for STAtistical Reports
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     person("Lukas", "Baumann", , "baumann@imbi.uni-heideberg.de", role = c("aut", "cre"))
 Description: retabstar creates nice looking regression tables to be used in
@@ -18,6 +18,21 @@ Suggests:
     MASS,
     nlme,
     survival,
+    mice,
+    AER,
+    broom,
     mice
 URL: https://github.com/lbau7/regtabstar
 BugReports: https://github.com/lbau7/regtabstar/issues
+Collate: 
+    'regtab.R'
+    'regtab.coxph.R'
+    'regtab.glm.R'
+    'regtab.glmerMod.R'
+    'regtab.lm.R'
+    'regtab.lme.R'
+    'regtab.lmerMod.R'
+    'regtab.lmerModLmerTest.R'
+    'utils.R'
+    'regtab.mira.R'
+    'regtab.polr.R'
