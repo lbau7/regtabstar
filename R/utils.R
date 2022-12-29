@@ -76,8 +76,8 @@ add_reference_levels <- function(coefsm, mod, or){
 
     facvec <- facvec[-1]
 
-    emptyrow <- c(0, rep(".", (ncol(coefsm) - 3)), "coefficient", ".")
-    if(or) emptyrow <- c(1, rep(".", (ncol(coefsm) - 3)), "coefficient", ".")
+    emptyrow <- c(0, rep(".", (ncol(coefsm) - 3)), ".", "coefficient")
+    if(or) emptyrow <- c(1, rep(".", (ncol(coefsm) - 3)), ".", "coefficient")
     newrowpos <- grep(1, facvec)
     j <- 0
     for(i in 1:sum(facrows)) {

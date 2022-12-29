@@ -123,11 +123,10 @@ regtab.mira <- function(mod, format = "latex", style_options = list(),
   if (modclass == "glm"){
     coefsm <- cbind(coefsm, coef.type = c("intercept", rep("coefficient", nrow(coefsm)-1)))
   } else if (modclass == "polr") {
-    coefsm <- cbind(coefsm[-which(names(coefsm)=="p-value")],
+    coefsm <- cbind(coefsm,
                     coef.type = gsub(pattern = "scale",
                       replacement = "intercept",
-                      x = broom::tidy(mod1)$coef.type),
-                    coefsm[which(names(coefsm)=="p-value")])
+                      x = broom::tidy(mod1)$coef.type))
   }
   # Round to specified number of digits
   if (pval) highsig <- which(coefsm[, "p-value"] < 0.001)

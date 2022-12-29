@@ -14,6 +14,7 @@ package}
   ci = TRUE,
   ci_level = 0.95,
   se_logor = FALSE,
+  vcov = NULL,
   teststatistic = FALSE,
   pval = TRUE,
   intercept = FALSE,
@@ -49,6 +50,10 @@ displayed.}
 \item{se_logor}{Whether the standard errors of the log odds ratios
 should be displayed.}
 
+\item{vcov}{If \code{NULL} then the covariance matrix computed
+from \code{lm} will be used. Alternatively, one of the covariance matrix
+functions from the the \code{sandwich} package can be passed.}
+
 \item{teststatistic}{Whether the test statistic should be displayed.}
 
 \item{pval}{Whether the p-values should be displayed.}
@@ -75,10 +80,6 @@ variables should be displayed.}
 \code{"label"}-attributes of the columns}
 
 \item{...}{Further optional arguments.}
-
-\item{vcov}{If \code{NULL} then the covariance matrix computed
-from \code{lm} will be used. Alternatively, one of the covariance matrix
-functions from the the \code{sandwich} package can be passed.}
 }
 \value{
 \code{regtab} uses \code{kableExtra::kbl} to return a table.

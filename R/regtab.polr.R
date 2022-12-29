@@ -44,7 +44,7 @@
 #' regtab(house.plr, rowlabs_auto = housing)
 regtab.polr <- function(mod, format = "latex", style_options = list(),
                        or = TRUE, logor = FALSE, ci = TRUE, ci_level = 0.95,
-                       se_logor = FALSE, teststatistic = FALSE,
+                       se_logor = FALSE, vcov = NULL, teststatistic = FALSE,
                        pval = TRUE, intercept = FALSE, caption = NULL,
                        n_caption = TRUE, rowlabs = NULL, addref = TRUE,
                        digits = 3, rowlabs_auto = NULL, ...) {
@@ -54,11 +54,12 @@ regtab.polr <- function(mod, format = "latex", style_options = list(),
   # Get model estimates
   coefsm <- data.frame(broom::tidy(mod, conf.int = TRUE, conf.level = ci_level,
                         p.values = FALSE))
-  rownames(coefsm) = coefsm[,1]
-  coefsm <- cbind(exp(coefsm[,2, drop = FALSE]),
-                  coefsm[,c(5,6), drop = FALSE],
-                  coefsm[,c(2,3,4,7), drop = FALSE],
-                  `p-value` = rep(NA_real_, length(coefsm[,1])))
+  rownames(coefsm) = coefsm[, 1]
+  coefsm <- cbind(exp(coefsm[, 2, drop = FALSE]),
+                  coefsm[, c(5,6), drop = FALSE],
+                  coefsm[, c(2,3,4), drop = FALSE],
+                  `p-value` = rep(NA_real_, length(coefsm[,1])),
+                  coefsm[, 7, drop = FALSE])
   # Exponentiate confidence intervals
   if(or){
     coefsm[,c(2, 3)] <- exp(coefsm[,c(2,3)])
@@ -112,8 +113,8 @@ regtab.polr <- function(mod, format = "latex", style_options = list(),
   # Remove unwanted columns
   colnames(coefsm) <- c("Odds Ratio", "Lower CL", "Upper CL",
                         "log OR", "SE (log OR)", "t-value",
-                        "coef.type",  "p-value")
-  inc_col <- which(c(or, ci, ci, logor, se_logor, teststatistic, 0, pval) != 0)
+                        "p-value", "coef.type")
+  inc_col <- which(c(or, ci, ci, logor, se_logor, teststatistic, pval, 0) != 0)
   coefsm <- coefsm[, inc_col, drop = FALSE]
   # Output table using kable
   out <- kableExtra::kbl(coefsm, format = format, booktabs = TRUE,
