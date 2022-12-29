@@ -95,6 +95,7 @@ logistic regression models fit with \code{glm}.
 library(mice)
 
 imp <- mice::mice(nhanes2, m = 2, print = FALSE, seed = 14221)
+set.seed(13)
 mod <- mice:::with.mids(imp, glm(hyp ~ age + chl, family = binomial))
 regtab(mod)
 # Example for the use of labels
@@ -104,6 +105,7 @@ attr(data$age, "label") <- "BMI [kg/m^2]"
 attr(data$hyp, "label") <- "Hypertension"
 attr(data$chl, "label") <- "Total serum cholesterol [mg/dl]"
 imp2 <- mice::mice(data, m = 2, print = FALSE, seed = 14221)
+set.seed(14)
 mod2 <- mice:::with.mids(imp2, glm(hyp ~ age + chl, family = binomial))
 regtab(mod2, rowlabs_auto = data)
 
@@ -127,6 +129,7 @@ attr(housing_amp$Infl, "label") <- "Degree of influence"
 attr(housing_amp$Type, "label") <- "Type"
 attr(housing_amp$Cont, "label") <- "Contact with other residents"
 imp3 <- mice::mice(housing_amp, m = 2, print = FALSE, seed = 14221)
+set.seed(67)
 mod3 <- mice:::with.mids(imp3,
                          MASS::polr(Sat ~ Infl + Type + Cont, weights = Freq,
                                     Hess = TRUE))
