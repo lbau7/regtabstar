@@ -79,6 +79,8 @@ regtab.polr <- function(mod, format = "latex", style_options = list(),
   # Add reference level
   if (addref) {
     coefsm <- add_reference_levels(coefsm, mod, or, covar_pos)
+    # After adding reference levels, covar_pos needs to be updated
+    covar_pos = which(coefsm$coef.type == "coefficient")
   }
 
   if (!is.null(rowlabs_auto) & is.null(rowlabs)) {
