@@ -5,7 +5,7 @@
 \title{Helper function for adding reference levels to the regression coefficients
 of factors}
 \usage{
-add_reference_levels(coefsm, mod, or)
+add_reference_levels(coefsm, mod, or, covar_pos)
 }
 \arguments{
 \item{coefsm}{a data frame containing the regression coefficients}
@@ -13,6 +13,9 @@ add_reference_levels(coefsm, mod, or)
 \item{mod}{the underlying model}
 
 \item{or}{Whether the odds ratios should be displayed.}
+
+\item{covar_pos}{an integer vector containing the indexes of the rows
+of \code{coefsm} that contain the covariates}
 }
 \value{
 a data frame containing the regression coefficients including their
