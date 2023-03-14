@@ -1,6 +1,6 @@
 Package: regtabstar
 Title: Create nice looking REGression TABles for STAtistical Reports
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: 
     person("Lukas", "Baumann", , "baumann@imbi.uni-heideberg.de", role = c("aut", "cre"))
 Description: retabstar creates nice looking regression tables to be used in
