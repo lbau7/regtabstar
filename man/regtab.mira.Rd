@@ -101,7 +101,7 @@ regtab(mod)
 # Example for the use of labels
 data <- nhanes2
 attr(data$age, "label") <- "Age [years]"
-attr(data$age, "label") <- "BMI [kg/m^2]"
+attr(data$bmi, "label") <- "BMI [kg/m^2]"
 attr(data$hyp, "label") <- "Hypertension"
 attr(data$chl, "label") <- "Total serum cholesterol [mg/dl]"
 imp2 <- mice::mice(data, m = 2, print = FALSE, seed = 14221)

@@ -8,7 +8,7 @@ Description: retabstar creates nice looking regression tables to be used in
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Imports: 
     kableExtra
 Suggests: 
@@ -21,7 +21,7 @@ Suggests:
     mice,
     AER,
     broom,
-    mice
+    testthat (>= 3.0.0)
 URL: https://github.com/lbau7/regtabstar
 BugReports: https://github.com/lbau7/regtabstar/issues
 Collate: 
@@ -36,3 +36,4 @@ Collate:
     'utils.R'
     'regtab.mira.R'
     'regtab.polr.R'
+Config/testthat/edition: 3
